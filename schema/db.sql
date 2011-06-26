@@ -9,3 +9,4 @@
 CREATE DATABASE twitterparty;
 CREATE USER 'twitterparty'@'localhost' IDENTIFIED BY 'twitterparty';
 GRANT ALL PRIVILEGES ON `twitterparty`.* TO 'twitterparty'@'localhost';
+FLUSH PRIVILEGES;
