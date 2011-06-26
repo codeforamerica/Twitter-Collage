@@ -12,9 +12,9 @@
 
 # This document assumes:
 # - a single server deployment (ubuntu) 
-# - code is at /servers/prod/twitterparty
+# - code is at $public_path
 # - data is at /servers/data/twitterparty
-# - user is root, current working dir is /servers/prod/twitterparty
+# - user is root, current working dir is $public_path
 # - configuration file is "config/config.prod.yaml"
 # - daemontools is used to supervise jobs 
 
@@ -41,14 +41,15 @@ apt-get install daemontools
 
 
 
-
+repo_path='/servers/prod/Twitter-Collage/'
+public_path='/servers/prod/twitterparty'
 ## -- code --
 
-# assuming code is at /servers/prod/twitterparty
+# assuming code is at $public_path
 
 #not assuming anymore, creating if it doesn't exist
 
-mkdir -p /servers/prod/twitterparty
+mkdir -p $public_path
 
 # assuming config file is "config/config.prod.yaml"
 
@@ -64,16 +65,16 @@ apt-get install git-core git-doc
 cd /servers/prod
 #pointing to new forked repo @ code for america
 git clone git://github.com/codeforamerica/Twitter-Collage.git
-cd /servers/prod/twitterparty
+cd $public_path
 mkdir /servers/prod/config/
-ln -s Twitter-Collage/config/config.prod.yaml config/config.yaml
+ln -s $repo_path/config/config.prod.yaml config/config.yaml
 
 # edit configuration in config/config.prod.yaml
 # need to set paths, Database/* and App/url 
 
 
 
-cp /servers/prod/Twitter-Collage/assets/install/svscan.conf  /etc/init/svscan.conf
+cp $repo_path/assets/install/svscan.conf  /etc/init/svscan.conf
 
 # init service directory
 
@@ -106,20 +107,20 @@ chmod 777 /var/log/twitterparty
 # this happens before the mysql user exists!
 
 ## -- mysql --
-mysql -u root -p < /servers/prod/Twitter-Collage/schema/db.sql < /servers/prod/Twitter-Collage/schema/tables.sql
+mysql -u root -p < $repo_path/schema/db.sql < $repo_path/schema/tables.sql
 
 
-php /servers/prod/Twitter-Collage/util/configure.php
+php $repo_path/util/configure.php
 
-mkdir /servers/prod/twitterparty/config
+mkdir $public_path/config
 
-chmod 777 /servers/prod/twitterparty/config
+chmod 777 $public_path/config
 
 # writes to config/mosaic-xxx.php + public/store/config/grid.js
-php /servers/prod/Twitter-Collage/util/mosaic-configure.php
+php $repo_path/util/mosaic-configure.php
 
 # writes to public/store/pages
-php /servers/prod/Twitter-Collage/util/mosaic-make-tiles.php
+php $repo_path/util/mosaic-make-tiles.php
 
 
 
@@ -127,7 +128,7 @@ php /servers/prod/Twitter-Collage/util/mosaic-make-tiles.php
 
 
 # HOST twitterparty.mozilla.org
-# doc root /servers/prod/twitterparty/public
+# doc root $public_path/public
 # public/.htaccess does the rest
 
 # web should now be available at http://twitterparty.mozilla.org and http://twitterparty.mozilla.org/dashboard
@@ -147,22 +148,22 @@ php /servers/prod/Twitter-Collage/util/mosaic-make-tiles.php
 
 ## -- install jobs --
 
-# assuming code is at /servers/prod/twitterparty
+# assuming code is at $public_path
 # assuming jobbs are supervised by daemontools
 
 # http://cr.yp.to/daemontools/start.html
 
 mkdir /etc/service/twitterparty-twitter-search
 echo '#!/bin/sh
-exec php /servers/prod/twitterparty/job/twitter-search.php' > /etc/service/twitterparty-twitter-search/run
+exec php /servers/prod/Twitter-Collage/job/twitter-search.php' > /etc/service/twitterparty-twitter-search/run
 
 mkdir /etc/service/twitterparty-image-process
 echo '#!/bin/sh
-exec php /servers/prod/twitterparty/job/image-process.php' > /etc/service/twitterparty-image-process/run
+exec php /servers/prod/Twitter-Collage/job/image-process.php' > /etc/service/twitterparty-image-process/run
 
 mkdir /etc/service/twitterparty-mosaic-build
 echo '#!/bin/sh
-exec php /servers/prod/twitterparty/job/mosaic-build.php' > /etc/service/twitterparty-mosaic-build/run
+exec php /servers/prod/Twitter-Collage/job/mosaic-build.php' > /etc/service/twitterparty-mosaic-build/run
 
 chmod -R 755 /etc/service/twitterparty-*
 
@@ -173,8 +174,9 @@ chmod -R 755 /etc/service/twitterparty-*
 # stop jobs before updating code or configuration
 
 svc -d /etc/service/twitterparty-*
-git pull
-php util/configure.php
+#shouldn't update this way... for simple web apps
+#git pull
+php $repo_path/util/configure.php
 svc -u /etc/service/twitterparty-*
 
 
