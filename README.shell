@@ -31,7 +31,7 @@
 ## -- required --
 
 
-
+apt-get update
 apt-get install memcached mysql-server
 apt-get install php5 php5-dbg php5-dev php5-common php5-cli php5-cgi php-pear php5-curl php5-mysql php5-tidy php5-memcache php5-imagick imagemagick
 apt-get install daemontools
@@ -69,9 +69,9 @@ apt-get install git-core git-doc
 cd /servers/prod
 #pointing to new forked repo @ code for america
 git clone git://github.com/codeforamerica/Twitter-Collage.git
-cd Twitter-Collage
-
-ln -s config.prod.yaml config/config.yaml
+cd /servers/prod/twitterparty
+mkdir /servers/prod/config/
+ln -s Twitter-Collage/config/config.prod.yaml config/config.yaml
 
 # edit configuration in config/config.prod.yaml
 # need to set paths, Database/* and App/url 
@@ -87,8 +87,7 @@ mkdir -p /servers/data/twitterparty
 #  www-data doesn't need write permissions
 #  jobs are run as root
 
-mkdir /servers/data/twitterparty
-mkdir public/store
+mkdir -p public/store
 mkdir public/store/pages
 mkdir public/store/config
 
