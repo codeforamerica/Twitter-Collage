@@ -176,6 +176,9 @@ chmod -R 755 /etc/service/twitterparty-*
 svc -d /etc/service/twitterparty-*
 #shouldn't update this way... for simple web apps
 #git pull
+
+chmod 755 $repo_path/util/configure.php
+
 php $repo_path/util/configure.php
 svc -u /etc/service/twitterparty-*
 
