@@ -39,12 +39,7 @@ apt-get install daemontools
 # dameontools specific:
 # http://www.bytereef.org/howto/djb/daemontools-install.html
 
-cp assets/install/svscan.conf  /etc/init/svscan.conf
 
-# init service directory
-
-mkdir /etc/service
-sudo telinit Q
 
 
 ## -- code --
@@ -77,12 +72,21 @@ ln -s Twitter-Collage/config/config.prod.yaml config/config.yaml
 # need to set paths, Database/* and App/url 
 
 
+
+cp /servers/prod/Twitter-Collage/assets/install/svscan.conf  /etc/init/svscan.conf
+
+# init service directory
+
+mkdir /etc/service
+sudo telinit Q
+
+
 ## -- private data and public storage  --
 
 # assuming data is at /servers/data/twitterparty
 
 mkdir -p /servers/data/twitterparty
-
+cd /servers/data/twitterparty
 # permissions: 
 #  www-data doesn't need write permissions
 #  jobs are run as root
@@ -99,23 +103,23 @@ chmod 777 /var/log/twitterparty
 ## -- configure --
 
 # reads config/config.yaml > writes to config/config.php 
-php util/configure.php
-
-# writes to config/mosaic-xxx.php + public/store/config/grid.js
-php util/mosaic-configure.php
-
-# writes to public/store/pages
-php util/mosaic-make-tiles.php
-
-
+# this happens before the mysql user exists!
 
 ## -- mysql --
-#This haults the installation process... db.sql can't really be run within this script (passed directly into mysql) 
+mysql -u root -p < /servers/prod/Twitter-Collage/schema/db.sql < /servers/prod/Twitter-Collage/schema/tables.sql
 
-mysql -u root -p < schema/db.sql < schema/tables.sql
 
-# mysql > \. schema/db.sql
-# mysql > \. schema/tables.sql
+php /servers/prod/Twitter-Collage/util/configure.php
+
+mkdir /servers/prod/twitterparty/config
+
+chmod 777 /servers/prod/twitterparty/config
+
+# writes to config/mosaic-xxx.php + public/store/config/grid.js
+php /servers/prod/Twitter-Collage/util/mosaic-configure.php
+
+# writes to public/store/pages
+php /servers/prod/Twitter-Collage/util/mosaic-make-tiles.php
 
 
 
