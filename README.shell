@@ -29,6 +29,9 @@
 
 
 ## -- required --
+# make user superuser to avoid any pesky errors
+sudo su
+
 
 apt-get install memcached mysql-server
 apt-get install php5 php5-dbg php5-dev php5-common php5-cli php5-cgi php-pear php5-curl php5-mysql php5-tidy php5-memcache php5-imagick imagemagick
@@ -48,14 +51,25 @@ sudo telinit Q
 ## -- code --
 
 # assuming code is at /servers/prod/twitterparty
+
+#not assuming anymore, creating if it doesn't exist
+
+mkdir -p /servers/prod/twitterparty
+
 # assuming config file is "config/config.prod.yaml"
 
 # permissions: 
 #  www-data doesn't need write permissions
 #  jobs are run as root
 
+
+#install git before using gitclone 
+apt-get install git-core git-doc
+
+
 cd /servers/prod
-git clone git@github.com:quodis/Twitter-Collage.git twitterparty 
+#pointing to new forked repo @ code for america
+git clone git://github.com/codeforamerica/Twitter-Collage.git
 cd twitterparty
 
 ln -s config.prod.yaml config/config.yaml
@@ -67,6 +81,8 @@ ln -s config.prod.yaml config/config.yaml
 ## -- private data and public storage  --
 
 # assuming data is at /servers/data/twitterparty
+
+mkdir -p /servers/data/twitterparty
 
 # permissions: 
 #  www-data doesn't need write permissions
@@ -96,8 +112,9 @@ php util/mosaic-make-tiles.php
 
 
 ## -- mysql --
+#This haults the installation process... db.sql can't really be run within this script (passed directly into mysql) 
 
-mysql -u root -p
+mysql -u root -p < schema/db.sql < schema/tables.sql
 
 # mysql > \. schema/db.sql
 # mysql > \. schema/tables.sql
