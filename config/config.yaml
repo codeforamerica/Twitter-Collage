@@ -1,0 +1,103 @@
+#
+# Firefox 4 Twitter Party
+#
+# For deployment in a single server, assuming: 
+# - mysql and memcache are local
+# - url is http://twitterparty.mozilla.org 
+# - deployment path is /servers/prod/twitterparty
+# - data path is /servers/data/twitterparty
+#
+App:
+    # path    
+    path: /servers/prod/twitterparty
+    pathLog: /var/log/twitterparty
+    # url
+    url: http://twitterparty.mozilla.org
+    # enable logs 
+    logEnabled: 0
+Store:
+    url: http://twitterparty.mozilla.org/store
+    path: /servers/prod/twitterparty/public/store
+    filePermissions: 644
+    dirPermissions: 755
+    group: root
+Data:
+    path: /servers/data/twitterparty
+    filePermissions: 664
+    dirPermissions: 775
+    group: www-data
+Config:
+    filePermissions: 664
+    group: www-data
+Twitter:
+    urlSearch: "http://search.twitter.com/search.json"
+    terms: "#fx4 OR #ff4 OR #teamfirefox"
+    rpp: 100
+    pageLimit: 5
+    timeout:
+        apiCall: 5
+        imgFile: 1
+    blacklist:
+        - firefoxsux
+Mosaic:
+    logoFile: assets/logo-48x47.png
+    reducedFile: assets/logo-reduced-48x47.png
+    defaultPic: assets/default48x48.png
+    configFile: config/mosaic-48x47.config.php
+    cols: 48
+    rows: 47
+    tileSize: 12
+    colorDepth: 12
+    internalComposite: 0
+Jobs:
+    twitter-search:
+        hasCronSchedule: 1
+        period: 30
+    image-process:
+        hasCronSchedule: 1
+        period: 30
+        dbLimit: 100
+        imgLimit: 100
+    mosaic-build:
+        hasCronSchedule: 1
+        period: 60
+Cache:
+    enabled: 1
+    TTL:
+        mosaicConfig: 2000 
+        tweetIds: 200
+        index: 30
+        poll: 15
+    servers:
+        - host: localhost
+          port: 11211
+Db:
+    connection:
+        host: localhost
+        name: twitterparty
+        user: twitterparty
+        pass: twitterparty
+UI:
+    gaEnabled: "0"
+    gaId: ""
+    title: "The American Flag | Code for America"
+    keywords: "Code for America, Flag, American Flag, Collage, Twitter, Tweet"
+    description: "The CfA American Flag is a college of activity on Twitter. It is an experiment with exclusively open web tools and technologies, based off of the work of the Mozilla Foundation."
+    minified: 1
+    js: 
+        general: "/assets/js/general.js?v=1"
+        config: "/assets/js/config.js?v=1"
+        dashboard: "/assets/js/dashboard.js?v=1"
+        minified: "/assets/js/party-min.js?v=1"
+    js-config:
+        grid: "/config/grid.js?v=1"
+    css:
+        main: "/assets/css/ftp.css?v=1"
+        mosaic: "/assets/css/mosaic.css?v=1"
+        dashboard: "/assets/css/dashboard.css?v=1"
+        minified: "/assets/css/party-min.css?v=1"
+    pollLimit: 100
+    resultsLimit: 100
+    options:
+        store_url: http://twitterparty.mozilla.org/store
+        short_stat_interval: 3000
