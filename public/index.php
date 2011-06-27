@@ -16,7 +16,7 @@ function main()
 	DEFINE('CLIENT', 'html');
 	DEFINE('CONTEXT', __FILE__);
 	include '../bootstrap.php';
-
+	
 	Debug::setLogMsgFile($config['App']['pathLog'] .'/www.msg.log');
 	Debug::setLogErrorFile($config['App']['pathLog'] .'/www.error.log');
 
@@ -53,6 +53,15 @@ function main()
 
 	// js config
 	$uiOptions = $config['UI']['options'];
+	
+
+	$output = ob_get_contents();
+	Cache::set($cacheKey, $output, $cacheTTL);
+	header('Content-type: text/html');
+	//exit();
+
+} // main()
+
 
 ?>
 <!DOCTYPE html>
@@ -281,15 +290,8 @@ function main()
 	</body>
 
 </html>
+
 <?php
-
-	$output = ob_get_contents();
-	Cache::set($cacheKey, $output, $cacheTTL);
-	header('Content-type: text/html');
-	exit();
-
-} // main()
-
 try
 {
 	main();
